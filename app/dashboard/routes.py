@@ -15,3 +15,17 @@ def smart_dashboard():
 
     elif current_user.role == "student":
         return render_template("student_dashboard.html")
+
+from app.models.user import User
+
+
+@dashboard.route("/defaulters")
+@login_required
+def defaulters():
+
+    if current_user.role != "admin":
+        return "<h3>Access Denied</h3>"
+
+    defaulters = User.query.filter_by(is_defaulter=True).all()
+
+    return render_template("defaulters.html", defaulters=defaulters)

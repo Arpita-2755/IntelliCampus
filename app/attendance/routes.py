@@ -44,6 +44,12 @@ def mark_attendance():
             percentage = (presents / total_classes) * 100 if total_classes > 0 else 0
 
             student.attendance_percentage = round(percentage, 2)
+            # DEF AULTER LOGIC
+            if percentage < 75:
+                student.is_defaulter = True
+            else:
+                student.is_defaulter = False
+
 
         db.session.commit()
 

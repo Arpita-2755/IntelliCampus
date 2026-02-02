@@ -15,6 +15,14 @@
         {% endif %}
     ">
         {{ current_user.attendance_percentage }}%
+        {% if current_user.is_defaulter %}
+        <div class="alert alert-danger mt-4">
+            ⚠️ Warning! Your attendance is below 75%.  
+            Please attend classes regularly.
+        </div>
+
+        {% endif %}
+
     </h2>
 
 </div>

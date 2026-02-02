@@ -15,6 +15,8 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(50), nullable=False)  
     # admin / faculty / student
     attendance_percentage = db.Column(db.Float, default=0.0)
+    is_defaulter = db.Column(db.Boolean, default=False)
+
 
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
