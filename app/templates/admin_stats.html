@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>System Control Center</h2>
+
+<div class="row mt-4">
+
+    <div class="col-md-3">
+        <div class="card shadow p-4 text-center">
+            <h3>{{ total_students }}</h3>
+            <p>Total Students</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow p-4 text-center">
+            <h3>{{ total_faculty }}</h3>
+            <p>Total Faculty</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow p-4 text-center">
+            <h3 style="color:red;">{{ defaulters }}</h3>
+            <p>Defaulters</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow p-4 text-center">
+            <h3>{{ total_attendance }}</h3>
+            <p>Attendance Records</p>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

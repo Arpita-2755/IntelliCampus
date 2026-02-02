@@ -48,3 +48,26 @@ def analytics():
         presents=presents,
         absents=absents
     )
+from app.models.user import User
+from app.models.attendance import Attendance
+
+
+@dashboard.route("/admin_stats")
+@login_required
+def admin_stats():
+
+    if current_user.role != "admin":
+        return "<h3>Access Denied</h3>"
+
+    total_students = User.query.filter_by(role="student").count()
+    total_faculty = User.query.filter_by(role="faculty").count()
+    defaulters = User.query.filter_by(is_defaulter=True).count()
+    total_attendance = Attendance.query.count()
+
+    return render_template(
+        "admin_stats.html",
+        total_students=total_students,
+        total_faculty=total_faculty,
+        defaulters=defaulters,
+        total_attendance=total_attendance
+    )
