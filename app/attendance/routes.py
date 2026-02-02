@@ -33,6 +33,20 @@ def mark_attendance():
             db.session.add(record)
 
         db.session.commit()
+        # AUTO CALCULATE ATTENDANCE %
+
+        for student in students:
+
+            total_classes = Attendance.query.filter_by(student_id=student.id).count()
+
+            presents = Attendance.query.filter_by(student_id=student.id, status="Present").count()
+
+            percentage = (presents / total_classes) * 100 if total_classes > 0 else 0
+
+            student.attendance_percentage = round(percentage, 2)
+
+        db.session.commit()
+
 
         return "<h2>Attendance Marked Successfully ✅</h2>"
 

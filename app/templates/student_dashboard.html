@@ -6,7 +6,18 @@
 
 <div class="card shadow p-4 mt-4">
     <h5>Your Attendance</h5>
-    <p>Track your academic performance in real-time.</p>
+
+    <h2 style="color:
+        {% if current_user.attendance_percentage < 75 %}
+            red
+        {% else %}
+            green
+        {% endif %}
+    ">
+        {{ current_user.attendance_percentage }}%
+    </h2>
+
 </div>
+
 
 {% endblock %}
