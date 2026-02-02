@@ -52,7 +52,7 @@ def login():
 
         if user and check_password_hash(user.password, password):
             login_user(user)
-            return "<h2>Login Successful ✅</h2>"
+            return redirect(url_for("dashboard.smart_dashboard"))
 
         flash("Invalid credentials!")
 

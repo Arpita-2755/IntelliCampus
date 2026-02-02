@@ -22,9 +22,14 @@ def create_app():
     from app.auth import auth
     app.register_blueprint(auth)
 
+    from app.dashboard import dashboard
+    app.register_blueprint(dashboard)
+
+
     return app
 
 
 @login_manager.user_loader
 def load_user(user_id):
+    from app.models.user import User
     return User.query.get(int(user_id))
