@@ -6,7 +6,7 @@ from app.attendance import attendance
 from app.models.user import User
 from app.models.attendance import Attendance
 from app import db
-
+from ai_engine.face_verification import verify_face
 
 @attendance.route("/mark_attendance", methods=["GET", "POST"])
 @login_required
@@ -57,3 +57,60 @@ def mark_attendance():
         return "<h2>Attendance Marked Successfully ✅</h2>"
 
     return render_template("mark_attendance.html", students=students)
+
+@attendance.route("/ai_attendance/<int:student_id>")
+@login_required
+def ai_attendance(student_id):
+
+    if current_user.role != "faculty":
+        return "<h3>Access Denied</h3>"
+
+    student = User.query.get(student_id)
+
+    import os
+
+    base_path = f"known_faces/{student.name.lower()}"
+
+    if os.path.exists(base_path + ".jpg"):
+        known_image = base_path + ".jpg"
+
+    elif os.path.exists(base_path + ".jpeg"):
+        known_image = base_path + ".jpeg"
+
+    elif os.path.exists(base_path + ".png"):
+        known_image = base_path + ".png"
+
+    else:
+        return "<h3>No reference image found for this student.</h3>"
+
+    verified = verify_face(known_image)
+
+    status = "Present" if verified else "Absent"
+
+    record = Attendance(
+        student_id=student.id,
+        faculty_id=current_user.id,
+        date=date.today(),
+        status=status
+    )
+
+    db.session.add(record)
+    db.session.commit()
+
+    # UPDATE PERCENTAGE
+    total_classes = Attendance.query.filter_by(student_id=student.id).count()
+
+    presents = Attendance.query.filter_by(
+        student_id=student.id,
+        status="Present"
+    ).count()
+
+    percentage = (presents / total_classes) * 100 if total_classes > 0 else 0
+
+    student.attendance_percentage = round(percentage, 2)
+    student.is_defaulter = percentage < 75
+
+    db.session.commit()
+
+    return f"<h2>AI Attendance Marked: {status}</h2>"
+

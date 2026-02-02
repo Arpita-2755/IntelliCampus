@@ -10,18 +10,28 @@
         <tr>
             <th>Student</th>
             <th>Status</th>
+            <th>AI Attendance</th>
         </tr>
 
         {% for student in students %}
         <tr>
-            <td>{{ student.name }}</td>
-            <td>
-                <select name="{{ student.id }}">
-                    <option value="Present">Present</option>
-                    <option value="Absent">Absent</option>
-                </select>
-            </td>
-        </tr>
+    <td>{{ student.name }}</td>
+
+    <td>
+        <select name="{{ student.id }}">
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+        </select>
+    </td>
+
+    <td>
+        <a href="/ai_attendance/{{ student.id }}"
+           class="btn btn-dark btn-sm">
+           AI Mark
+        </a>
+    </td>
+</tr>
+
         {% endfor %}
 
     </table>
