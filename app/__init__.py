@@ -25,6 +25,8 @@ def create_app():
     from app.dashboard import dashboard
     app.register_blueprint(dashboard)
 
+    from app.attendance import attendance
+    app.register_blueprint(attendance)
 
     return app
 
