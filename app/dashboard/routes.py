@@ -1,4 +1,5 @@
 from flask_login import login_required, current_user
+from flask import render_template
 from app.dashboard import dashboard
 
 
@@ -7,13 +8,10 @@ from app.dashboard import dashboard
 def smart_dashboard():
 
     if current_user.role == "admin":
-        return "<h1>Welcome Admin 🧠</h1>"
+        return render_template("admin_dashboard.html")
 
     elif current_user.role == "faculty":
-        return "<h1>Welcome Faculty 👨‍🏫</h1>"
+        return render_template("faculty_dashboard.html")
 
     elif current_user.role == "student":
-        return "<h1>Welcome Student 🎓</h1>"
-
-    else:
-        return "<h1>Unauthorized</h1>"
+        return render_template("student_dashboard.html")
