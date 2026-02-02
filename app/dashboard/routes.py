@@ -29,3 +29,22 @@ def defaulters():
     defaulters = User.query.filter_by(is_defaulter=True).all()
 
     return render_template("defaulters.html", defaulters=defaulters)
+
+from app.models.attendance import Attendance
+
+
+@dashboard.route("/analytics")
+@login_required
+def analytics():
+
+    if current_user.role != "admin":
+        return "<h3>Access Denied</h3>"
+
+    presents = Attendance.query.filter_by(status="Present").count()
+    absents = Attendance.query.filter_by(status="Absent").count()
+
+    return render_template(
+        "analytics.html",
+        presents=presents,
+        absents=absents
+    )

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Academic Analytics Dashboard</h2>
+
+<canvas id="attendanceChart" width="400" height="150"></canvas>
+
+<script>
+
+const ctx = document.getElementById('attendanceChart');
+
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Present', 'Absent'],
+        datasets: [{
+            label: 'Attendance',
+            data: [{{ presents }}, {{ absents }}],
+        }]
+    }
+});
+
+</script>
+
+{% endblock %}

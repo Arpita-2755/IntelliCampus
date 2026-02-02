@@ -49,6 +49,10 @@ def mark_attendance():
                 student.is_defaulter = True
             else:
                 student.is_defaulter = False
+            if student.is_defaulter:
+                from app.utils.email import send_defaulter_email
+                send_defaulter_email(student.email, student.name)
+
 
 
         db.session.commit()
