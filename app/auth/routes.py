@@ -46,6 +46,13 @@ def register():
 
         face = request.files.get("face")
 
+# 🔥 FORCE FACE FOR STUDENTS
+        if role == "student":
+            if not face or face.filename == "":
+                flash("Students must upload a face image for AI attendance.")
+                return redirect(url_for("auth.register"))
+
+
         # 🔥 Only process face if uploaded
         if face and face.filename != "":
 
@@ -64,6 +71,7 @@ def register():
                 )
 
                 embedding = result[0]["embedding"]
+                print("EMBEDDING GENERATED:", len(embedding))
                 face_filename = filename
 
                 # ⭐ OPTIONAL BUT SMART:
