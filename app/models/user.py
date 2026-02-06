@@ -1,6 +1,7 @@
 from app import db
 from flask_login import UserMixin
 
+
 class User(db.Model, UserMixin):
     __tablename__ = "users"
 
@@ -12,11 +13,14 @@ class User(db.Model, UserMixin):
 
     password = db.Column(db.String(200), nullable=False)
 
-    role = db.Column(db.String(50), nullable=False)  
-    # admin / faculty / student
+    role = db.Column(db.String(50), nullable=False)
+
+    # 🔥 AI Fields
+    face_image = db.Column(db.String(300), nullable=True)
+    embedding = db.Column(db.PickleType, nullable=True)
+
     attendance_percentage = db.Column(db.Float, default=0.0)
     is_defaulter = db.Column(db.Boolean, default=False)
-
 
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 

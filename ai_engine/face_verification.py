@@ -4,15 +4,15 @@ import cv2
 
 def verify_face(known_image_path):
 
-    video = cv2.VideoCapture(0)
+    '''video = cv2.VideoCapture(0)'''
 
     print("Starting camera...")
 
     while True:
 
-        ret, frame = video.read()
+        '''ret, frame = video.read()'''
 
-        cv2.imshow("AI Attendance - Press Q to Capture", frame)
+        '''cv2.imshow("AI Attendance - Press Q to Capture", frame)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
 
@@ -22,7 +22,7 @@ def verify_face(known_image_path):
             break
 
     video.release()
-    cv2.destroyAllWindows()
+    cv2.destroyAllWindows()'''
 
     try:
 

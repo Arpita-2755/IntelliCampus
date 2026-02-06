@@ -1,15 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - IntelliCampus</title>
+</head>
+<body>
+
 <h2>Register</h2>
 
-<form method="POST">
-    <input name="name" placeholder="Name" required><br><br>
-    <input name="email" placeholder="Email" required><br><br>
-    <input name="password" type="password" placeholder="Password" required><br><br>
+<form method="POST" enctype="multipart/form-data">
 
-    <select name="role">
+    <input type="text" name="name" placeholder="Name" required>
+    <br><br>
+
+    <input type="email" name="email" placeholder="Email" required>
+    <br><br>
+
+    <input type="password" name="password" placeholder="Password" required>
+    <br><br>
+
+    <select name="role" required>
+        <option value="">Select Role</option>
         <option value="student">Student</option>
         <option value="faculty">Faculty</option>
         <option value="admin">Admin</option>
-    </select><br><br>
+    </select>
+
+    <br><br>
+
+    <label>Upload Face (Required for Students)</label>
+    <br>
+    <input type="file" name="face" accept="image/*">
+
+    <br><br>
 
     <button type="submit">Register</button>
+
 </form>
+
+</body>
+</html>
