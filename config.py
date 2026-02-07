@@ -3,13 +3,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "super-secret-fallback-key")
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL",
-        "sqlite:///local.db"
-    )
+class Config:
+    SECRET_KEY = os.getenv("SECRET_KEY", "devkey")
+
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(BASE_DIR, "instance", "intellicampus.db")
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-

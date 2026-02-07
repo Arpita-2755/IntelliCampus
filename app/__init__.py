@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -11,9 +12,13 @@ def create_app():
 
 
     app = Flask(__name__)
+
+    os.makedirs(os.path.join(os.getcwd(), "instance"), exist_ok=True)
+
     app.config.from_object("config.Config")
 
     db.init_app(app)
+
     
 
 

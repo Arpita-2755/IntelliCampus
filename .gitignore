@@ -1,8 +1,66 @@
+# Virtual Environment
 venv/
+env/
+
+# Python cache
 __pycache__/
 *.pyc
+*.pyo
+
+# Environment variables
 .env
+
+# Databases
 instance/
+*.db
 *.sqlite3
-local.db
+
+# OS junk
 .DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# ML / AI artifacts
+*.h5
+*.pkl
+*.pickle
+*.npy
+
+# DeepFace weights (VERY IMPORTANT)
+.deepface/
+# Virtual Environment
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables
+.env
+
+# Databases
+instance/
+*.db
+*.sqlite3
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# ML / AI artifacts
+*.h5
+*.pkl
+*.pickle
+*.npy
+
+# DeepFace weights (VERY IMPORTANT)
+.deepface/
