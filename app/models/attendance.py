@@ -11,7 +11,9 @@ class Attendance(db.Model):
 
     faculty_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
-    date = db.Column(db.Date, nullable=False)
+    from datetime import date
+    date = db.Column(db.Date, nullable=False, default=date.today)
+
 
     status = db.Column(db.String(20), nullable=False)  
     # Present / Absent

@@ -62,9 +62,65 @@ def mark_attendance():
 
     return render_template("mark_attendance.html", students=students)
 
-@attendance.route("/ai_attendance/<int:student_id>")
+import os
+import uuid
+from flask import render_template, request, redirect, url_for, flash
+from flask_login import login_required, current_user
+
+from app.attendance import attendance
+from ai_engine.attendance_marker import mark_attendance_from_image
+
+
+UPLOAD_FOLDER = "temp_uploads"
+
+
+@attendance.route("/ai_attendance", methods=["GET", "POST"])
 @login_required
-def ai_attendance(id):
-    return "AI Attendance Upgrade in Progress 🚀"
+def ai_attendance():
+
+    # Only faculty/admin allowed
+    if current_user.role not in ["faculty", "admin"]:
+        flash("Unauthorized access.","warning")
+        return redirect(url_for("dashboard.smart_dashboard"))
+
+    if request.method == "POST":
+
+        image = request.files.get("class_image")
+
+        if not image or image.filename == "":
+            flash("Please upload a classroom image.")
+            return redirect(request.url)
+
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+        filename = f"{uuid.uuid4()}.jpg"
+        path = os.path.join(UPLOAD_FOLDER, filename)
+
+        image.save(path)
+
+        try:
+
+            present_count = mark_attendance_from_image(
+                path,
+                current_user.id
+            )
+            from app.utils.attendance_utils import recalculate_attendance
+
+            recalculate_attendance()
+
+            flash(f"AI Attendance Complete ✅ {present_count} students marked present.","success")
+
+        except Exception as e:
+            print("AI ERROR:", e)
+            flash("AI attendance failed.","danger")
+
+        finally:
+            if os.path.exists(path):
+                os.remove(path)
+
+        return redirect(url_for("dashboard.smart_dashboard"))
+
+    return render_template("ai_attendance.html")
+
 
 

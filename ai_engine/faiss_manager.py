@@ -39,9 +39,9 @@ def add_embedding(embedding, user_id):
     index = load_index()
     mapping = load_map()
 
-    vector = np.array(embedding).astype("float32").reshape(1, -1)
-
-    index.add(vector)
+    vector = np.array(embedding).astype("float32")
+    vector = vector / np.linalg.norm(vector)
+    index.add(vector.reshape(1, -1))
 
     mapping.append(user_id)
 
@@ -54,16 +54,21 @@ def search_embedding(embedding, k=1):
     index = load_index()
     mapping = load_map()
 
-    vector = np.array(embedding).astype("float32").reshape(1, -1)
+    # ⭐ NORMALIZE QUERY VECTOR (CRITICAL)
+    vector = np.array(embedding).astype("float32")
+    vector = vector / np.linalg.norm(vector)
+
+    vector = vector.reshape(1, -1)
 
     distances, indices = index.search(vector, k)
 
-    matched_users = []
+    idx = indices[0][0]
+    distance = distances[0][0]
 
-    for idx in indices[0]:
-        if idx < len(mapping):
-            matched_users.append(mapping[idx])
-        else:
-            matched_users.append(None)
+    print("FAISS DISTANCE:", distance)
+    print("FAISS INDEX:", idx)
 
-    return distances, matched_users
+    if idx < len(mapping):
+        return mapping[idx], distance
+    else:
+        return None, None
