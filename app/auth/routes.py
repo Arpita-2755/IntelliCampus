@@ -10,7 +10,7 @@ from app.models.user import User
 from app import db
 
 from deepface import DeepFace
-
+from ai_engine.faiss_manager import add_embedding
 
 UPLOAD_FOLDER = "app/static/faces"
 
@@ -32,7 +32,7 @@ def register():
         password = request.form.get("password")
         role = request.form.get("role")
 
-        # 🔥 Prevent duplicate users (VERY IMPORTANT)
+        # ✅ Prevent duplicate users
         existing_user = User.query.filter_by(email=email).first()
 
         if existing_user:
@@ -46,14 +46,13 @@ def register():
 
         face = request.files.get("face")
 
-# 🔥 FORCE FACE FOR STUDENTS
+        # 🔥 Force face for students
         if role == "student":
             if not face or face.filename == "":
-                flash("Students must upload a face image for AI attendance.")
+                flash("Students must upload a face image.")
                 return redirect(url_for("auth.register"))
 
-
-        # 🔥 Only process face if uploaded
+        # ✅ Process face if uploaded
         if face and face.filename != "":
 
             os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -71,18 +70,16 @@ def register():
                 )
 
                 embedding = result[0]["embedding"]
-                print("EMBEDDING GENERATED:", len(embedding))
                 face_filename = filename
 
-                # ⭐ OPTIONAL BUT SMART:
-                # Delete raw image after embedding to save storage
-                # os.remove(filepath)
+                print("EMBEDDING GENERATED:", len(embedding))
 
-            except Exception:
+            except Exception as e:
+                print("FACE ERROR:", e)
                 flash("Face not detected. Upload a clear front-face image.")
                 return redirect(url_for("auth.register"))
 
-        # 🔥 CREATE USER
+        # ✅ CREATE USER (ONLY ONCE — VERY IMPORTANT)
         user = User(
             name=name,
             email=email,
@@ -95,10 +92,21 @@ def register():
         db.session.add(user)
         db.session.commit()
 
+        print("USER CREATED:", user.id)
+
+        # ✅ ADD TO FAISS
+        if embedding is not None:
+            try:
+                print("ADDING TO FAISS:", user.id)
+                add_embedding(embedding, user.id)
+            except Exception as e:
+                print("FAISS ERROR:", e)
+
         flash("Registration successful! Please login.")
         return redirect(url_for("auth.login"))
 
     return render_template("register.html")
+
 
 
 # ✅ LOGIN
