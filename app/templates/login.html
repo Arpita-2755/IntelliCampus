@@ -1,8 +1,15 @@
-<h2>Login</h2>
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card p-5 mx-auto" style="max-width:500px;">
+<h3 class="mb-4 text-center">Login</h3>
 
 <form method="POST">
-    <input name="email" placeholder="Email" required><br><br>
-    <input name="password" type="password" placeholder="Password" required><br><br>
-
-    <button type="submit">Login</button>
+    <input class="form-control mb-3" name="email" placeholder="Email" required>
+    <input class="form-control mb-3" type="password" name="password" placeholder="Password" required>
+    <button class="btn btn-primary w-100">Login</button>
 </form>
+
+</div>
+
+{% endblock %}

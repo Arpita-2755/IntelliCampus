@@ -18,7 +18,7 @@ UPLOAD_FOLDER = "app/static/faces"
 # ✅ HOME
 @auth.route("/")
 def home():
-    return "<h1>IntelliCampus is Running 🚀</h1>"
+    return render_template("home.html")
 
 
 # ✅ REGISTER

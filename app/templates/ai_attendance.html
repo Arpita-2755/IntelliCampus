@@ -1,13 +1,15 @@
-<h2>AI Attendance</h2>
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card p-5 text-center">
+
+<h2>🤖 AI Attendance</h2>
 
 <form method="POST" enctype="multipart/form-data">
-    
-    <input type="file" name="class_image" required>
-    
-    <br><br>
-
-    <button type="submit">
-        Upload & Mark Attendance
-    </button>
-
+<input class="form-control mb-3" type="file" name="class_image" required>
+<button class="btn btn-dark">Upload & Process</button>
 </form>
+
+</div>
+
+{% endblock %}

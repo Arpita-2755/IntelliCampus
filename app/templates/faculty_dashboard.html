@@ -1,20 +1,45 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<h2>Faculty Control Panel 👨‍🏫</h2>
+<h2>👨‍🏫 Faculty Dashboard</h2>
 
-<div class="card shadow p-4 mt-4">
-    <h5>Mark Attendance</h5>
+<div class="row mt-4 g-4">
 
-    <a href="/mark_attendance" class="btn btn-primary">
-        Open Attendance System
-    </a>
+<div class="col-md-6">
+<div class="card p-4">
+<h5>Manual Attendance</h5>
+<a href="/mark_attendance" class="btn btn-primary">Open</a>
+</div>
 </div>
 
-<a href="/ai_attendance">
-    <button>Start AI Attendance</button>
-</a>
+<div class="col-md-6">
+<div class="card p-4">
+<h5>AI Attendance</h5>
+<a href="/ai_attendance" class="btn btn-dark">Start AI</a>
+</div>
+</div>
 
+</div>
+
+<hr class="mt-5">
+
+<h4>🕒 Attendance History</h4>
+
+<table class="table shadow mt-3">
+<tr>
+<th>Student ID</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+
+{% for row in history %}
+<tr>
+<td>{{ row.student_id }}</td>
+<td>{{ row.status }}</td>
+<td>{{ row.date }}</td>
+</tr>
+{% endfor %}
+
+</table>
 
 {% endblock %}

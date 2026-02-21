@@ -1,12 +1,32 @@
-from flask_login import login_required, current_user
-from flask import render_template, request
+import os
+import uuid
 from datetime import date
 
+from flask import (
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash
+)
+
+from flask_login import login_required, current_user
+
 from app.attendance import attendance
+from app import db
+
 from app.models.user import User
 from app.models.attendance import Attendance
-from app import db
-from ai_engine.face_verification import verify_face
+
+from ai_engine.attendance_marker import mark_attendance_from_image
+
+
+UPLOAD_FOLDER = "temp_uploads"
+
+
+# =====================================================
+# MANUAL ATTENDANCE
+# =====================================================
 
 @attendance.route("/mark_attendance", methods=["GET", "POST"])
 @login_required
@@ -33,54 +53,56 @@ def mark_attendance():
             db.session.add(record)
 
         db.session.commit()
-        # AUTO CALCULATE ATTENDANCE %
 
+        # ===============================
+        # AUTO RECALCULATE ATTENDANCE %
+        # ===============================
         for student in students:
 
-            total_classes = Attendance.query.filter_by(student_id=student.id).count()
+            total_classes = Attendance.query.filter_by(
+                student_id=student.id
+            ).count()
 
-            presents = Attendance.query.filter_by(student_id=student.id, status="Present").count()
+            presents = Attendance.query.filter_by(
+                student_id=student.id,
+                status="Present"
+            ).count()
 
-            percentage = (presents / total_classes) * 100 if total_classes > 0 else 0
+            percentage = (
+                (presents / total_classes) * 100
+                if total_classes > 0 else 0
+            )
 
             student.attendance_percentage = round(percentage, 2)
-            # DEF AULTER LOGIC
-            if percentage < 75:
-                student.is_defaulter = True
-            else:
-                student.is_defaulter = False
+            student.is_defaulter = percentage < 75
+
+            # 🔥 SIMULATED EMAIL ALERT
             if student.is_defaulter:
-                from app.utils.email import send_defaulter_email
-                send_defaulter_email(student.email, student.name)
-
-
+                try:
+                    from app.utils.email import send_defaulter_email
+                    send_defaulter_email(student.email, student.name)
+                except Exception as e:
+                    print("EMAIL SIMULATION:", e)
 
         db.session.commit()
 
-
-        return "<h2>Attendance Marked Successfully ✅</h2>"
+        flash("Attendance marked successfully ✅", "success")
+        return redirect(url_for("dashboard.smart_dashboard"))
 
     return render_template("mark_attendance.html", students=students)
 
-import os
-import uuid
-from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_required, current_user
 
-from app.attendance import attendance
-from ai_engine.attendance_marker import mark_attendance_from_image
-
-
-UPLOAD_FOLDER = "temp_uploads"
-
+# =====================================================
+# AI ATTENDANCE
+# =====================================================
 
 @attendance.route("/ai_attendance", methods=["GET", "POST"])
 @login_required
 def ai_attendance():
 
-    # Only faculty/admin allowed
+    # faculty + admin allowed
     if current_user.role not in ["faculty", "admin"]:
-        flash("Unauthorized access.","warning")
+        flash("Unauthorized access.", "warning")
         return redirect(url_for("dashboard.smart_dashboard"))
 
     if request.method == "POST":
@@ -88,7 +110,7 @@ def ai_attendance():
         image = request.files.get("class_image")
 
         if not image or image.filename == "":
-            flash("Please upload a classroom image.")
+            flash("Please upload a classroom image.", "warning")
             return redirect(request.url)
 
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -100,31 +122,35 @@ def ai_attendance():
 
         try:
 
+            # ===============================
+            # AI ATTENDANCE PIPELINE
+            # ===============================
             present_students, absent_students = mark_attendance_from_image(
                 path,
                 current_user.id
             )
 
+            # ===============================
+            # RECALCULATE PERCENTAGES
+            # ===============================
             from app.utils.attendance_utils import recalculate_attendance
+            recalculate_attendance()
 
-            recalculate_attendance()        
+            flash("AI Attendance Completed ✅", "success")
+
+            return render_template(
+                "ai_result.html",
+                present_students=present_students,
+                absent_students=absent_students
+            )
 
         except Exception as e:
             print("AI ERROR:", e)
-            flash("AI attendance failed.","danger")
+            flash("AI attendance failed.", "danger")
+            return redirect(url_for("dashboard.smart_dashboard"))
 
         finally:
             if os.path.exists(path):
                 os.remove(path)
 
-        return render_template(
-            "ai_result.html",
-            present_students=present_students,
-            absent_students=absent_students
-        )
-
-
     return render_template("ai_attendance.html")
-
-
-

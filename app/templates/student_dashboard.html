@@ -1,31 +1,48 @@
 {% extends "base.html" %}
-
 {% block content %}
 
-<h2>Student Hub 🎓</h2>
+<h2>🎓 Student Dashboard</h2>
 
-<div class="card shadow p-4 mt-4">
-    <h5>Your Attendance</h5>
+<div class="card p-4 text-center mt-3">
 
-    <h2 style="color:
-        {% if current_user.attendance_percentage < 75 %}
-            red
-        {% else %}
-            green
-        {% endif %}
-    ">
-        {{ current_user.attendance_percentage }}%
-        {% if current_user.is_defaulter %}
-        <div class="alert alert-danger mt-4">
-            ⚠️ Warning! Your attendance is below 75%.  
-            Please attend classes regularly.
-        </div>
+<h4>Your Attendance</h4>
 
-        {% endif %}
+<h1 style="color:
+{% if current_user.attendance_percentage < 75 %}
+red
+{% else %}
+green
+{% endif %}
+">
+{{ current_user.attendance_percentage }}%
+</h1>
 
-    </h2>
+{% if current_user.is_defaulter %}
+<div class="alert alert-danger mt-3">
+⚠ Attendance below 75%
+</div>
+{% endif %}
 
 </div>
 
+<hr>
+
+<h4>Attendance History</h4>
+
+<table class="table shadow mt-3">
+
+<tr>
+<th>Status</th>
+<th>Date</th>
+</tr>
+
+{% for row in history %}
+<tr>
+<td>{{ row.status }}</td>
+<td>{{ row.date }}</td>
+</tr>
+{% endfor %}
+
+</table>
 
 {% endblock %}

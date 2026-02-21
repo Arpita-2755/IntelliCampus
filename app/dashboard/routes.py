@@ -2,21 +2,53 @@ from flask_login import login_required, current_user
 from flask import render_template
 from app.dashboard import dashboard
 
+from app.models.user import User
+from app.models.attendance import Attendance
+
 
 @dashboard.route("/dashboard")
 @login_required
 def smart_dashboard():
 
+    # ===== ADMIN DASHBOARD =====
     if current_user.role == "admin":
-        return render_template("admin_dashboard.html")
 
+        total_students = User.query.filter_by(role="student").count()
+        total_faculty = User.query.filter_by(role="faculty").count()
+        defaulters = User.query.filter_by(is_defaulter=True).count()
+        total_attendance = Attendance.query.count()
+
+        return render_template(
+            "admin_dashboard.html",
+            total_students=total_students,
+            total_faculty=total_faculty,
+            defaulters=defaulters,
+            total_attendance=total_attendance
+        )
+
+    # ===== FACULTY DASHBOARD =====
     elif current_user.role == "faculty":
-        return render_template("faculty_dashboard.html")
 
+        history = Attendance.query.filter_by(
+            faculty_id=current_user.id
+        ).order_by(Attendance.created_at.desc()).limit(15).all()
+
+        return render_template(
+            "faculty_dashboard.html",
+            history=history
+        )
+
+    # ===== STUDENT DASHBOARD =====
     elif current_user.role == "student":
-        return render_template("student_dashboard.html")
 
-from app.models.user import User
+        history = Attendance.query.filter_by(
+            student_id=current_user.id
+        ).order_by(Attendance.created_at.desc()).all()
+
+        return render_template(
+            "student_dashboard.html",
+            history=history
+        )
 
 
 @dashboard.route("/defaulters")
@@ -29,8 +61,6 @@ def defaulters():
     defaulters = User.query.filter_by(is_defaulter=True).all()
 
     return render_template("defaulters.html", defaulters=defaulters)
-
-from app.models.attendance import Attendance
 
 
 @dashboard.route("/analytics")
@@ -47,27 +77,4 @@ def analytics():
         "analytics.html",
         presents=presents,
         absents=absents
-    )
-from app.models.user import User
-from app.models.attendance import Attendance
-
-
-@dashboard.route("/admin_stats")
-@login_required
-def admin_stats():
-
-    if current_user.role != "admin":
-        return "<h3>Access Denied</h3>"
-
-    total_students = User.query.filter_by(role="student").count()
-    total_faculty = User.query.filter_by(role="faculty").count()
-    defaulters = User.query.filter_by(is_defaulter=True).count()
-    total_attendance = Attendance.query.count()
-
-    return render_template(
-        "admin_stats.html",
-        total_students=total_students,
-        total_faculty=total_faculty,
-        defaulters=defaulters,
-        total_attendance=total_attendance
     )
