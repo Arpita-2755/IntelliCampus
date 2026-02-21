@@ -100,15 +100,14 @@ def ai_attendance():
 
         try:
 
-            present_count = mark_attendance_from_image(
+            present_students, absent_students = mark_attendance_from_image(
                 path,
                 current_user.id
             )
+
             from app.utils.attendance_utils import recalculate_attendance
 
-            recalculate_attendance()
-
-            flash(f"AI Attendance Complete ✅ {present_count} students marked present.","success")
+            recalculate_attendance()        
 
         except Exception as e:
             print("AI ERROR:", e)
@@ -118,7 +117,12 @@ def ai_attendance():
             if os.path.exists(path):
                 os.remove(path)
 
-        return redirect(url_for("dashboard.smart_dashboard"))
+        return render_template(
+            "ai_result.html",
+            present_students=present_students,
+            absent_students=absent_students
+        )
+
 
     return render_template("ai_attendance.html")
 

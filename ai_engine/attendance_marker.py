@@ -35,6 +35,9 @@ def mark_attendance_from_image(image_path, faculty_id):
 
         db.session.add(attendance)
     db.session.commit()
-    print("PRESENT IDS:", present_ids)
 
-    return len(present_ids)
+    present_students = [s for s in students if s.id in present_ids]
+    absent_students = [s for s in students if s.id not in present_ids]
+
+    return present_students, absent_students
+

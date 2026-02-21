@@ -4,11 +4,9 @@ import pickle
 import os
 
 from app.models.user import User
-from app import db
-
 
 INDEX_PATH = "faiss_index.bin"
-MAP_PATH = "id_map.pkl"
+MAP_PATH = "faiss_map.pkl"
 
 
 def rebuild_faiss():
@@ -29,7 +27,12 @@ def rebuild_faiss():
 
     for student in students:
 
-        embeddings.append(np.array(student.embedding).astype("float32"))
+        vec = np.array(student.embedding).astype("float32")
+
+        # ⭐ CRITICAL FIX — normalize
+        vec = vec / np.linalg.norm(vec)
+
+        embeddings.append(vec)
         id_map.append(student.id)
 
     embeddings = np.array(embeddings).astype("float32")
@@ -39,7 +42,6 @@ def rebuild_faiss():
     index = faiss.IndexFlatL2(dimension)
     index.add(embeddings)
 
-    # Save files
     faiss.write_index(index, INDEX_PATH)
 
     with open(MAP_PATH, "wb") as f:

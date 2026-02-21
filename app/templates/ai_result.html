@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card shadow p-4">
+
+    <h2 class="text-success">AI Attendance Completed ✅</h2>
+
+    <hr>
+
+    <h4>Present Students</h4>
+    <ul class="list-group mb-4">
+        {% for student in present_students %}
+            <li class="list-group-item list-group-item-success">
+                {{ student.name }} ({{ student.email }})
+            </li>
+        {% else %}
+            <li class="list-group-item">No students marked present.</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Absent Students</h4>
+    <ul class="list-group">
+        {% for student in absent_students %}
+            <li class="list-group-item list-group-item-danger">
+                {{ student.name }} ({{ student.email }})
+            </li>
+        {% else %}
+            <li class="list-group-item">No absentees 🎉</li>
+        {% endfor %}
+    </ul>
+
+    <a href="/dashboard" class="btn btn-primary mt-4">
+        Back to Dashboard
+    </a>
+
+</div>
+
+{% endblock %}

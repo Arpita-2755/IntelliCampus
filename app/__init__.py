@@ -31,7 +31,15 @@ def create_app():
         db.create_all()
             # AUTO REBUILD FAISS ON STARTUP
         from ai_engine.faiss_rebuild import rebuild_faiss
-        rebuild_faiss()
+
+        index_exists = os.path.exists("faiss_index.bin")
+        map_exists = os.path.exists("faiss_map.pkl")
+
+        if not index_exists or not map_exists:
+            print("🔥 FAISS files missing → rebuilding...")
+            rebuild_faiss()
+        else:
+            print("✅ FAISS already exists — skipping rebuild")
 
 
     # ✅ REGISTER BLUEPRINTS
