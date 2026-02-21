@@ -29,6 +29,10 @@ def create_app():
     with app.app_context():
         from app.models import User, Attendance
         db.create_all()
+            # AUTO REBUILD FAISS ON STARTUP
+        from ai_engine.faiss_rebuild import rebuild_faiss
+        rebuild_faiss()
+
 
     # ✅ REGISTER BLUEPRINTS
     from app.auth import auth
