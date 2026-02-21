@@ -64,3 +64,6 @@ Thumbs.db
 
 # DeepFace weights (VERY IMPORTANT)
 .deepface/
+
+app/static/faces/
+temp_uploads/
