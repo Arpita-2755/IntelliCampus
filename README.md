@@ -132,17 +132,17 @@ Flask App
 
 🧱 Tech Stack
 
-Backend
+Backend:
 Python
 Flask
 Flask-Login
 SQLAlchemy ORM
 
-Database
+Database:
 SQLite (Local Development)
 PostgreSQL (Cloud Ready)
 
-AI / ML
+AI / ML:
 DeepFace
 FaceNet Model
 RetinaFace Detector
@@ -150,12 +150,12 @@ NumPy
 OpenCV
 FAISS (Vector Search)
 
-Frontend
+Frontend:
 HTML
 Bootstrap 5
 Chart.js
 
-Dev Tools
+Dev Tools:
 Git & GitHub
 Virtual Environment (venv)
 
